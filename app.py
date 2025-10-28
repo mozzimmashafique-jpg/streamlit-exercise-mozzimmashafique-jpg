@@ -2,60 +2,52 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-st.set_page_config(page_title="Medals Visualaization", layout="wide")
-st.title("Medals Visualaization")
+st.set_page_config(page_title="Medals Visualization", layout="wide")
+st.title("Medals Visualization")
 
-#dropdown menu
-medal = st.selectbox("medal type", ["Gold", "Silver", "Bronze"])
+# Dropdown menu
+medal = st.selectbox("Medal type", ["Gold", "Silver", "Bronze"])
 
-#checkboxes
+# Checkboxes
+show_bar = st.checkbox("Show Bar Chart", value=True)
+show_pie = st.checkbox("Show Pie Chart", value=True)
 
-show_bar = st.checkbox("show Bar Chart",value=true)
-
-show_pie = st.checkbox("show Pie Chart",value=true)
-
-# two-col structure
-
+# Two-column structure
 col1, col2 = st.columns(2)
 
-# load the medal wide dataset
+# Load the medal wide dataset
 df = px.data.medals_wide()
 
-# plot the bar chart 
-
+# Plot the bar chart
 if show_bar:
-  fig = px.bar(
-      df,
-      x="nation",
-      y=f"{medal}",
-      title=f"medals count ({medal})",
+    fig_bar = px.bar(
+        df,
+        x="nation",
+        y=medal.lower(),  # dataset uses lowercase column names
+        title=f"Medals Count ({medal})",
+    )
 
-  )
-
-fig_bar.update_layout(
+    fig_bar.update_layout(
         title_x=0.5,
-        xaxis_title="county",
-        yaxis_title="count",
-        height = 300
-       
-      )
+        xaxis_title="Country",
+        yaxis_title="Count",
+        height=300
+    )
 
+    col1.plotly_chart(fig_bar, use_container_width=True)
 
-coll.plotly_chart(fig_bar, use_container_width=True)
-
+# Plot the pie chart
 if show_pie:
-  fig_pie = px.pie(
-      df,
-      names ="country",
-      values=f"{medal}",
-      title=f"medals count ({medal})",
-      
-  )
+    fig_pie = px.pie(
+        df,
+        names="nation",
+        values=medal.lower(),
+        title=f"Medals Count ({medal})",
+    )
 
-fig_pie.update_layout(
+    fig_pie.update_layout(
         title_x=0.5,
-        height = 300
-       
-      )
+        height=300
+    )
 
-fig.show ()
+    col2.plotly_chart(fig_pie, use_container_width=True)
